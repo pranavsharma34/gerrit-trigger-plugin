@@ -353,9 +353,6 @@ public enum GerritTriggerParameters {
         if (gerritEvent instanceof ManualPatchsetCreated) {
             GERRIT_MANUALLY_TRIGGERED.setOrCreateStringParameterValue(parameters, "TRUE", escapeQuotes);
         }
-        else {
-            GERRIT_MANUALLY_TRIGGERED.setOrCreateStringParameterValue(parameters, "FALSE", escapeQuotes);
-        }
         GERRIT_EVENT_TYPE.setOrCreateStringParameterValue(
                 parameters, gerritEvent.getEventType().getTypeValue(), escapeQuotes);
         GERRIT_EVENT_HASH.setOrCreateStringParameterValue(
