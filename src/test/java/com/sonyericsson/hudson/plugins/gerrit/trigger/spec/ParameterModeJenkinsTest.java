@@ -75,6 +75,43 @@ public class ParameterModeJenkinsTest {
     }
 
     /**
+     * Tests the parameter Manually Triggered
+     * when the build is triggered by a
+     * {@link com.sonymobile.tools.gerrit.gerritevents.dto.events.PatchsetCreated} mock event
+     *
+     * @throws Exception if so
+     */
+    @Test
+    public void testManuallyTriggeredParameterModeDefault() throws Exception
+    {
+        assertSame(GerritTriggerParameters.ParameterMode.PLAIN, trigger.getNameAndEmailParameterMode());
+        PluginImpl.getHandler_().triggerEvent(Setup.createManualPatchsetCreated());
+        j.waitUntilNoActivity();
+        FreeStyleBuild build = job.getLastBuild();
+        GerritTriggerParameters param = GerritTriggerParameters.GERRIT_MANUALLY_TRIGGERED;
+        j.assertLogContains(param.name() + "=" + "TRUE", build);
+    }
+
+    /**
+     * Tests the parameter Manually Triggered
+     * when the build is triggered by a
+     * {@link com.sonymobile.tools.gerrit.gerritevents.dto.events.PatchsetCreated} event.
+     *
+     * @throws Exception if so
+     */
+    @Test
+    public void testManuallyTriggeredParameterModePlain() throws Exception
+    {
+        assertSame(GerritTriggerParameters.ParameterMode.PLAIN, trigger.getNameAndEmailParameterMode());
+        Account ac = new Account("Bobby", "rsandell@cloudbees.com");
+        PluginImpl.getHandler_().triggerEvent(Setup.createPatchsetCreatedWithAccounts(ac, ac, ac));
+        j.waitUntilNoActivity();
+        FreeStyleBuild build = job.getLastBuild();
+        GerritTriggerParameters param = GerritTriggerParameters.GERRIT_MANUALLY_TRIGGERED;
+        j.assertLogContains(param.name() + "=" + "FALSE", build);
+    }
+
+    /**
      * Tests the default {@link GerritTriggerParameters.ParameterMode#PLAIN}
      * when the build is triggered by a
      * {@link com.sonymobile.tools.gerrit.gerritevents.dto.events.PatchsetCreated} event.
@@ -169,7 +206,8 @@ public class ParameterModeJenkinsTest {
         PluginImpl.getHandler_().triggerEvent(change);
         j.waitUntilNoActivity();
         FreeStyleBuild build = job.getLastBuild();
-        List<GerritTriggerParameters> params = Arrays.asList(GerritTriggerParameters.GERRIT_EVENT_ACCOUNT);
+        List<GerritTriggerParameters> params = Arrays.asList(
+                GerritTriggerParameters.GERRIT_EVENT_ACCOUNT);
         //TODO According to the doc GerritTriggerParameters.GERRIT_SUBMITTER should be set as well but its not?
         String expected = ac.getNameAndEmail();
         for (GerritTriggerParameters param : params) {
@@ -191,6 +229,7 @@ public class ParameterModeJenkinsTest {
         PluginImpl.getHandler_().triggerEvent(Setup.createPatchsetCreatedWithAccounts(ac, ac, ac));
         j.waitUntilNoActivity();
         FreeStyleBuild build = job.getLastBuild();
+        // Added Gerrit Manual Build here
         List<GerritTriggerParameters> params = Arrays.asList(
                 GerritTriggerParameters.GERRIT_CHANGE_OWNER,
                 GerritTriggerParameters.GERRIT_EVENT_ACCOUNT);
@@ -214,14 +253,14 @@ public class ParameterModeJenkinsTest {
         PluginImpl.getHandler_().triggerEvent(Setup.createPatchsetCreatedWithAccounts(ac, ac, ac));
         j.waitUntilNoActivity();
         FreeStyleBuild build = job.getLastBuild();
+        // Added Manual Build here
         List<GerritTriggerParameters> params = Arrays.asList(
                 GerritTriggerParameters.GERRIT_CHANGE_OWNER,
                 GerritTriggerParameters.GERRIT_EVENT_ACCOUNT);
         String expected = ac.getNameAndEmail();
         for (GerritTriggerParameters param : params) {
-            j.assertLogNotContains(param.name() + "=", build);
+            j.assertLogContains(param.name() + "=" + expected, build);
         }
-        j.assertLogNotContains(expected, build);
     }
 
     /**

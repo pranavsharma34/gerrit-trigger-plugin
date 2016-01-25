@@ -28,6 +28,7 @@ import com.sonyericsson.hudson.plugins.gerrit.trigger.GerritServer;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.Messages;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.PluginImpl;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.config.IGerritHudsonTriggerConfig;
+import com.sonyericsson.hudson.plugins.gerrit.trigger.events.ManualPatchsetCreated;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.parameters.Base64EncodedStringParameterValue;
 import com.sonyericsson.hudson.plugins.gerrit.trigger.utils.StringUtil;
 import com.sonymobile.tools.gerrit.gerritevents.dto.attr.Account;
@@ -213,7 +214,12 @@ public enum GerritTriggerParameters {
     /**
      * The type of the event.
      */
-    GERRIT_EVENT_TYPE;
+    GERRIT_EVENT_TYPE,
+    /**
+     * Manually Triggerd Flag.
+     */
+    GERRIT_MANUALLY_TRIGGERED;
+
 
     private static final Logger logger = LoggerFactory.getLogger(GerritTriggerParameters.class);
 
@@ -228,7 +234,7 @@ public enum GerritTriggerParameters {
      * @param clazz        the class which extends {@link hudson.model.ParameterValue}.
      */
     private void setOrCreateParameterValue(List<ParameterValue> parameters, String value, boolean escapeQuotes,
-            Class<? extends StringParameterValue> clazz) {
+                                           Class<? extends StringParameterValue> clazz) {
         ParameterValue parameter = null;
         for (ParameterValue p : parameters) {
             if (p.getName().toUpperCase().equals(this.name())) {
@@ -328,7 +334,7 @@ public enum GerritTriggerParameters {
      * @see #setOrCreateStringParameterValue(java.util.List, String, boolean)
      */
     public static void setOrCreateParameters(GerritTriggeredEvent gerritEvent, Job project,
-            List<ParameterValue> parameters) {
+                                             List<ParameterValue> parameters) {
 
         ParameterMode nameAndEmailParameterMode = ParameterMode.PLAIN;
         boolean escapeQuotes = false;
@@ -344,6 +350,13 @@ public enum GerritTriggerParameters {
             }
         }
 
+        /* Adding Code here */
+        if (gerritEvent instanceof ManualPatchsetCreated) {
+            GERRIT_MANUALLY_TRIGGERED.setOrCreateStringParameterValue(parameters, "TRUE", escapeQuotes);
+        }
+        else {
+            GERRIT_MANUALLY_TRIGGERED.setOrCreateStringParameterValue(parameters, "FALSE", escapeQuotes);
+        }
         GERRIT_EVENT_TYPE.setOrCreateStringParameterValue(
                 parameters, gerritEvent.getEventType().getTypeValue(), escapeQuotes);
         GERRIT_EVENT_HASH.setOrCreateStringParameterValue(
