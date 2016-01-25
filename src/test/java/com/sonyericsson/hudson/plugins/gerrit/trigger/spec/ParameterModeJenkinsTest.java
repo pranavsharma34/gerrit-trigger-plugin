@@ -75,40 +75,20 @@ public class ParameterModeJenkinsTest {
     }
 
     /**
-     * Tests the parameter Manually Triggered
+     * Tests the parameter Manually Triggered.
      * when the build is triggered by a
      * {@link com.sonymobile.tools.gerrit.gerritevents.dto.events.PatchsetCreated} mock event
      *
      * @throws Exception if so
      */
     @Test
-    public void testManuallyTriggeredParameterModeDefault() throws Exception
-    {
+    public void testManuallyTriggeredParameterModePlain() throws Exception {
         assertSame(GerritTriggerParameters.ParameterMode.PLAIN, trigger.getNameAndEmailParameterMode());
         PluginImpl.getHandler_().triggerEvent(Setup.createManualPatchsetCreated());
         j.waitUntilNoActivity();
         FreeStyleBuild build = job.getLastBuild();
         GerritTriggerParameters param = GerritTriggerParameters.GERRIT_MANUALLY_TRIGGERED;
         j.assertLogContains(param.name() + "=" + "TRUE", build);
-    }
-
-    /**
-     * Tests the parameter Manually Triggered
-     * when the build is triggered by a
-     * {@link com.sonymobile.tools.gerrit.gerritevents.dto.events.PatchsetCreated} event.
-     *
-     * @throws Exception if so
-     */
-    @Test
-    public void testManuallyTriggeredParameterModePlain() throws Exception
-    {
-        assertSame(GerritTriggerParameters.ParameterMode.PLAIN, trigger.getNameAndEmailParameterMode());
-        Account ac = new Account("Bobby", "rsandell@cloudbees.com");
-        PluginImpl.getHandler_().triggerEvent(Setup.createPatchsetCreatedWithAccounts(ac, ac, ac));
-        j.waitUntilNoActivity();
-        FreeStyleBuild build = job.getLastBuild();
-        GerritTriggerParameters param = GerritTriggerParameters.GERRIT_MANUALLY_TRIGGERED;
-        j.assertLogContains(param.name() + "=" + "FALSE", build);
     }
 
     /**
