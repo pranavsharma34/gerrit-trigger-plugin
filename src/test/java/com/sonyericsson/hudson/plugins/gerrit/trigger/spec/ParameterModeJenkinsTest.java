@@ -206,8 +206,7 @@ public class ParameterModeJenkinsTest {
         PluginImpl.getHandler_().triggerEvent(change);
         j.waitUntilNoActivity();
         FreeStyleBuild build = job.getLastBuild();
-        List<GerritTriggerParameters> params = Arrays.asList(
-                GerritTriggerParameters.GERRIT_EVENT_ACCOUNT);
+        List<GerritTriggerParameters> params = Arrays.asList(GerritTriggerParameters.GERRIT_EVENT_ACCOUNT);
         //TODO According to the doc GerritTriggerParameters.GERRIT_SUBMITTER should be set as well but its not?
         String expected = ac.getNameAndEmail();
         for (GerritTriggerParameters param : params) {
@@ -229,7 +228,6 @@ public class ParameterModeJenkinsTest {
         PluginImpl.getHandler_().triggerEvent(Setup.createPatchsetCreatedWithAccounts(ac, ac, ac));
         j.waitUntilNoActivity();
         FreeStyleBuild build = job.getLastBuild();
-        // Added Gerrit Manual Build here
         List<GerritTriggerParameters> params = Arrays.asList(
                 GerritTriggerParameters.GERRIT_CHANGE_OWNER,
                 GerritTriggerParameters.GERRIT_EVENT_ACCOUNT);
@@ -253,14 +251,14 @@ public class ParameterModeJenkinsTest {
         PluginImpl.getHandler_().triggerEvent(Setup.createPatchsetCreatedWithAccounts(ac, ac, ac));
         j.waitUntilNoActivity();
         FreeStyleBuild build = job.getLastBuild();
-        // Added Manual Build here
         List<GerritTriggerParameters> params = Arrays.asList(
                 GerritTriggerParameters.GERRIT_CHANGE_OWNER,
                 GerritTriggerParameters.GERRIT_EVENT_ACCOUNT);
         String expected = ac.getNameAndEmail();
         for (GerritTriggerParameters param : params) {
-            j.assertLogContains(param.name() + "=" + expected, build);
+            j.assertLogNotContains(param.name() + "=", build);
         }
+        j.assertLogNotContains(expected, build);
     }
 
     /**
