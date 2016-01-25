@@ -234,7 +234,7 @@ public enum GerritTriggerParameters {
      * @param clazz        the class which extends {@link hudson.model.ParameterValue}.
      */
     private void setOrCreateParameterValue(List<ParameterValue> parameters, String value, boolean escapeQuotes,
-                                           Class<? extends StringParameterValue> clazz) {
+            Class<? extends StringParameterValue> clazz) {
         ParameterValue parameter = null;
         for (ParameterValue p : parameters) {
             if (p.getName().toUpperCase().equals(this.name())) {
@@ -322,7 +322,7 @@ public enum GerritTriggerParameters {
      * @see #setOrCreateStringParameterValue(java.util.List, String, boolean)
      */
     public static void setOrCreateParameters(GerritTriggeredEvent gerritEvent,
-                                             List<ParameterValue> parameters) {
+            List<ParameterValue> parameters) {
         setOrCreateParameters(gerritEvent, null, parameters);
     }
 
