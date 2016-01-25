@@ -216,7 +216,7 @@ public enum GerritTriggerParameters {
      */
     GERRIT_EVENT_TYPE,
     /**
-     * Manually Triggerd Flag.
+     * Manually Triggered Flag.
      */
     GERRIT_MANUALLY_TRIGGERED;
 
@@ -350,7 +350,6 @@ public enum GerritTriggerParameters {
             }
         }
 
-        /* Adding Code here */
         if (gerritEvent instanceof ManualPatchsetCreated) {
             GERRIT_MANUALLY_TRIGGERED.setOrCreateStringParameterValue(parameters, "TRUE", escapeQuotes);
         }
